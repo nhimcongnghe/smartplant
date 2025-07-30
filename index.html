@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đăng nhập bằng Google - Cây Thông Minh</title>
+
+  <!-- Google Identity Services -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <!-- Style lung linh -->
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #7F7FD5, #86A8E7, #91EAE4);
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(15px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      color: white;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+
+    #g_id_onload,
+    .g_id_signin {
+      display: inline-block;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🌲 Chào mừng đến với Vườn Cây Thông Minh 🌲</h1>
+    <div id="g_id_onload"
+         data-client_id="YOUR_GOOGLE_CLIENT_ID"
+         data-callback="handleCredentialResponse"
+         data-auto_prompt="false">
+    </div>
+    
+    <div class="g_id_signin"
+         data-type="standard"
+         data-shape="pill"
+         data-theme="outline"
+         data-text="sign_in_with"
+         data-size="large"
+         data-logo_alignment="left">
+    </div>
+  </div>
+
+  <script>
+    function handleCredentialResponse(response) {
+      // Đây là nơi bạn xử lý ID token trả về
+      console.log("ID Token:", response.credential);
+
+      // Ví dụ hiển thị ra alert:
+      alert("Đăng nhập thành công với Google! 😍\n\nID Token:\n" + response.credential);
+
+      // Gửi token về server xác thực (nếu cần)
+    }
+  </script>
+</body>
+</html>
