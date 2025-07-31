@@ -39,9 +39,9 @@
       display: none;
     }
     button {
-      margin-top: 15px;
-      padding: 8px 16px;
-      font-size: 16px;
+      margin-top: 10px;
+      padding: 6px 14px;
+      font-size: 14px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
@@ -50,6 +50,14 @@
       text-align: left;
       margin-top: 10px;
       padding-left: 20px;
+    }
+    li {
+      margin-bottom: 6px;
+    }
+    .plant-actions button {
+      margin-left: 8px;
+      padding: 2px 8px;
+      font-size: 12px;
     }
   </style>
 </head>
@@ -115,9 +123,27 @@
 
       const list = document.getElementById("plantList");
       list.innerHTML = "";
-      plants.forEach(plant => {
+      plants.forEach((plant, index) => {
         const li = document.createElement("li");
-        li.textContent = plant;
+        const span = document.createElement("span");
+        span.textContent = plant;
+        li.appendChild(span);
+
+        const actions = document.createElement("span");
+        actions.classList.add("plant-actions");
+
+        const editBtn = document.createElement("button");
+        editBtn.textContent = "Sửa";
+        editBtn.onclick = () => editPlant(index);
+
+        const delBtn = document.createElement("button");
+        delBtn.textContent = "Xoá";
+        delBtn.onclick = () => deletePlant(index);
+
+        actions.appendChild(editBtn);
+        actions.appendChild(delBtn);
+        li.appendChild(actions);
+
         list.appendChild(li);
       });
     }
@@ -133,6 +159,23 @@
 
       localStorage.setItem("userPlants", JSON.stringify(data));
       input.value = "";
+      loadPlants();
+    }
+
+    function editPlant(index) {
+      const newName = prompt("Nhập tên mới cho cây:");
+      if (!newName) return;
+      const data = JSON.parse(localStorage.getItem("userPlants") || "{}");
+      data[currentUser][index] = newName.trim();
+      localStorage.setItem("userPlants", JSON.stringify(data));
+      loadPlants();
+    }
+
+    function deletePlant(index) {
+      if (!confirm("Bạn có chắc chắn muốn xoá cây này?")) return;
+      const data = JSON.parse(localStorage.getItem("userPlants") || "{}");
+      data[currentUser].splice(index, 1);
+      localStorage.setItem("userPlants", JSON.stringify(data));
       loadPlants();
     }
 
