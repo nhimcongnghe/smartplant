@@ -79,10 +79,25 @@
       background: #ffffff33;
       color: white;
     }
+    .maintenance {
+      font-size: 20px;
+      padding: 30px;
+      text-align: center;
+      color: white;
+    }
+    .sleeping-tree {
+      margin-top: 20px;
+      font-size: 50px;
+      animation: float 2s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
   </style>
 </head>
 <body>
-  <div class="card">
+  <div class="card" id="app">
     <h1>🌲 Vườn Cây Thông Minh 🌲</h1>
 
     <div id="g_id_onload"
@@ -111,7 +126,23 @@
     </div>
   </div>
 
+  <div class="card hidden" id="maintenance">
+    <h1>🔧 Bảo trì hệ thống</h1>
+    <div class="maintenance">
+      Trang web đang được cập nhật để phục vụ bạn tốt hơn.<br>
+      Vui lòng quay lại sau ít phút nữa nhé! 🌱
+      <div class="sleeping-tree">🌳💤</div>
+    </div>
+  </div>
+
   <script>
+    const IS_MAINTENANCE = false; // Đặt thành true để bật chế độ bảo trì
+
+    if (IS_MAINTENANCE) {
+      document.getElementById("app").classList.add("hidden");
+      document.getElementById("maintenance").classList.remove("hidden");
+    }
+
     function parseJwt (token) {
       const base64Url = token.split('.')[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
