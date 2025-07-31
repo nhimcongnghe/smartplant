@@ -6,7 +6,7 @@
   <title>Đăng nhập bằng Google - Cây Thông Minh</title>
 
   <!-- Google Identity Services -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://accounts.google.com/gsi/client?hl=vi" async defer></script>
 
   <!-- Style lung linh -->
   <style>
@@ -40,11 +40,24 @@
       display: inline-block;
       margin-top: 20px;
     }
+
+    #avatar {
+      margin-top: 15px;
+      border-radius: 50%;
+      width: 80px;
+      height: 80px;
+    }
+
+    #greeting {
+      margin-top: 20px;
+      font-size: 18px;
+    }
   </style>
 </head>
 <body>
   <div class="card">
     <h1>🌲 Chào mừng đến với Vườn Cây Thông Minh 🌲</h1>
+
     <div id="g_id_onload"
          data-client_id="280605494193-4agtv3ung516q140e5fbvb81kjf3tqmd.apps.googleusercontent.com"
          data-callback="handleCredentialResponse"
@@ -59,17 +72,29 @@
          data-size="large"
          data-logo_alignment="left">
     </div>
+
+    <div id="greeting"></div>
+    <img id="avatar" src="" alt="Ảnh đại diện" />
   </div>
 
   <script>
+    // Hàm giải mã ID token (JWT) để lấy thông tin người dùng
+    function parseJwt(token) {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      return JSON.parse(jsonPayload);
+    }
+
     function handleCredentialResponse(response) {
-      // Đây là nơi bạn xử lý ID token trả về
-      console.log("ID Token:", response.credential);
+      const idToken = response.credential;
+      const user = parseJwt(idToken);
 
-      // Ví dụ hiển thị ra alert:
-      alert("Đăng nhập thành công với Google! 😍\n\nID Token:\n" + response.credential);
-
-      // Gửi token về server xác thực (nếu cần)
+      // Lấy tên và ảnh người dùng
+      document.getElementById("greeting").innerHTML = `👋 Xin chào, <b>${user.name}</b>`;
+      document.getElementById("avatar").src = user.picture;
     }
   </script>
 </body>
