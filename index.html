@@ -3,12 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Đăng nhập bằng Google - Cây Thông Minh</title>
-
-  <!-- Google Identity Services -->
+  <title>Vườn Cây Thông Minh</title>
   <script src="https://accounts.google.com/gsi/client?hl=vi" async defer></script>
-
-  <!-- Style lung linh -->
   <style>
     body {
       background: linear-gradient(to bottom right, #7F7FD5, #86A8E7, #91EAE4);
@@ -19,7 +15,6 @@
       height: 100vh;
       margin: 0;
     }
-
     .card {
       background: rgba(255, 255, 255, 0.2);
       backdrop-filter: blur(15px);
@@ -28,42 +23,45 @@
       padding: 40px;
       text-align: center;
       color: white;
+      width: 400px;
     }
-
-    h1 {
-      margin-bottom: 20px;
-      font-size: 28px;
-    }
-
-    #g_id_onload,
-    .g_id_signin {
-      display: inline-block;
-      margin-top: 20px;
-    }
-
     #avatar {
       margin-top: 15px;
       border-radius: 50%;
       width: 80px;
       height: 80px;
     }
-
     #greeting {
       margin-top: 20px;
       font-size: 18px;
+    }
+    .hidden {
+      display: none;
+    }
+    button {
+      margin-top: 15px;
+      padding: 8px 16px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    ul {
+      text-align: left;
+      margin-top: 10px;
+      padding-left: 20px;
     }
   </style>
 </head>
 <body>
   <div class="card">
-    <h1>🌲 Chào mừng đến với Vườn Cây Thông Minh 🌲</h1>
+    <h1>🌲 Vườn Cây Thông Minh 🌲</h1>
 
     <div id="g_id_onload"
          data-client_id="280605494193-4agtv3ung516q140e5fbvb81kjf3tqmd.apps.googleusercontent.com"
          data-callback="handleCredentialResponse"
          data-auto_prompt="false">
     </div>
-    
     <div class="g_id_signin"
          data-type="standard"
          data-shape="pill"
@@ -73,13 +71,20 @@
          data-logo_alignment="left">
     </div>
 
-    <div id="greeting"></div>
-    <img id="avatar" src="" alt="Ảnh đại diện" />
+    <div id="greeting" class="hidden"></div>
+    <img id="avatar" class="hidden" src="" alt="Ảnh đại diện" />
+
+    <div id="garden" class="hidden">
+      <h3>🌿 Cây của bạn:</h3>
+      <ul id="plantList"></ul>
+      <input type="text" id="newPlant" placeholder="Tên cây mới" />
+      <button onclick="addPlant()">Thêm cây</button>
+      <button onclick="logout()">Đăng xuất</button>
+    </div>
   </div>
 
   <script>
-    // Hàm giải mã ID token (JWT) để lấy thông tin người dùng
-    function parseJwt(token) {
+    function parseJwt (token) {
       const base64Url = token.split('.')[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
       const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
@@ -88,13 +93,51 @@
       return JSON.parse(jsonPayload);
     }
 
-    function handleCredentialResponse(response) {
-      const idToken = response.credential;
-      const user = parseJwt(idToken);
+    let currentUser = null;
 
-      // Lấy tên và ảnh người dùng
+    function handleCredentialResponse(response) {
+      const user = parseJwt(response.credential);
+      currentUser = user.email;
+
       document.getElementById("greeting").innerHTML = `👋 Xin chào, <b>${user.name}</b>`;
       document.getElementById("avatar").src = user.picture;
+
+      document.getElementById("greeting").classList.remove("hidden");
+      document.getElementById("avatar").classList.remove("hidden");
+      document.getElementById("garden").classList.remove("hidden");
+
+      loadPlants();
+    }
+
+    function loadPlants() {
+      const data = JSON.parse(localStorage.getItem("userPlants") || "{}");
+      const plants = data[currentUser] || [];
+
+      const list = document.getElementById("plantList");
+      list.innerHTML = "";
+      plants.forEach(plant => {
+        const li = document.createElement("li");
+        li.textContent = plant;
+        list.appendChild(li);
+      });
+    }
+
+    function addPlant() {
+      const input = document.getElementById("newPlant");
+      const name = input.value.trim();
+      if (!name) return;
+
+      const data = JSON.parse(localStorage.getItem("userPlants") || "{}");
+      if (!data[currentUser]) data[currentUser] = [];
+      data[currentUser].push(name);
+
+      localStorage.setItem("userPlants", JSON.stringify(data));
+      input.value = "";
+      loadPlants();
+    }
+
+    function logout() {
+      location.reload();
     }
   </script>
 </body>
