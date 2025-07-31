@@ -59,6 +59,26 @@
       padding: 2px 8px;
       font-size: 12px;
     }
+    .chat-box {
+      margin-top: 10px;
+      padding: 10px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+    }
+    .chat-box textarea {
+      width: 100%;
+      height: 60px;
+      border-radius: 8px;
+      border: none;
+      padding: 8px;
+      resize: none;
+    }
+    .chat-box button {
+      margin-top: 6px;
+      width: 100%;
+      background: #ffffff33;
+      color: white;
+    }
   </style>
 </head>
 <body>
@@ -143,6 +163,14 @@
         actions.appendChild(editBtn);
         actions.appendChild(delBtn);
         li.appendChild(actions);
+
+        const chatBox = document.createElement("div");
+        chatBox.classList.add("chat-box");
+        chatBox.innerHTML = `
+          <textarea placeholder='Nhập lời muốn nói với cây "${plant}"...'></textarea>
+          <button disabled>Gửi lời nhắn 🌱 (chưa có backend)</button>
+        `;
+        li.appendChild(chatBox);
 
         list.appendChild(li);
       });
